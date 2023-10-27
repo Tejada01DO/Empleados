@@ -43,8 +43,11 @@ namespace RegistroEmpleados.Server.Migrations
                     AFP = table.Column<decimal>(type: "TEXT", nullable: false),
                     SeguroMedico = table.Column<decimal>(type: "TEXT", nullable: false),
                     Impuesto = table.Column<decimal>(type: "TEXT", nullable: false),
-                    Descuento = table.Column<decimal>(type: "TEXT", nullable: false),
-                    HorasExtras = table.Column<decimal>(type: "TEXT", nullable: false)
+                    SalarioBase = table.Column<decimal>(type: "TEXT", nullable: false),
+                    HorasTrabajadas = table.Column<int>(type: "INTEGER", nullable: false),
+                    HorasExtras = table.Column<int>(type: "INTEGER", nullable: false),
+                    DescuentoPrestamo = table.Column<int>(type: "INTEGER", nullable: false),
+                    SalarioNeto = table.Column<decimal>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

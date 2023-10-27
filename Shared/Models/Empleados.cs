@@ -16,6 +16,9 @@ public class Empleados
     public decimal AFP { get; set; }
     public decimal SeguroMedico { get; set; }
     public decimal Impuesto { get; set; }
-    public decimal Descuento { get; set; }
-    public decimal HorasExtras { get; set; }
+    public decimal SalarioBase { get; set; }
+    public int HorasTrabajadas { get; set; }
+    public int HorasExtras { get; set; }
+    public int DescuentoPrestamo { get; set; }
+    public decimal SalarioNeto { get; set; } 
 }

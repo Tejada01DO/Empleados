@@ -2,6 +2,7 @@
 @page "/R_Empleados/{EmpleadoId:int}"
 @inject HttpClient httpClient
 @inject NotificationService notify
+@inject IJSRuntime JSRuntime
 
 <EditForm Model="empleado" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
@@ -58,9 +59,12 @@
                     <div class="col-md-6">
                         <label>Profesion:</label>
                         <InputSelect @bind-Value="empleado.ProfesionId" class="form-select">
+                            
+                            <option value="0" disabled>Seleccione Profesion</option>
+
                             @foreach(var profesiones in L_Profesiones)
                             {
-                                <option value="profesiones.ProfesionId">@profesiones.Nombre</option>
+                                <option value="@profesiones.ProfesionId">@profesiones.Nombre</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="@(() => empleado.ProfesionId)" />
@@ -71,12 +75,12 @@
                     <div class="col-md-6">
                         <label>Departamento:</label>
                         <InputSelect @bind-Value="empleado.DepartamentoId" class="form-select">
-                            @if(empleado.DepartamentoId > 0)
+
+                            <option value="0" disabled>Seleccione Departamento</option>
+
+                            @foreach(var departamento in L_Departamentos.Where(d => d.ProfesionId == empleado.ProfesionId))
                             {
-                                @foreach(var departamento in L_Departamentos.Where(d => d.ProfesionId == empleado.ProfesionId))
-                                {
-                                    <option value="@departamento.DepartamentoId">@departamento.Nombre</option>
-                                }
+                                <option value="@departamento.DepartamentoId">@departamento.Nombre</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="@(() => empleado.DepartamentoId)" />
@@ -85,12 +89,12 @@
                     <div class="col-md-6">
                         <label>Puesto:</label>
                         <InputSelect @bind-Value="empleado.PuestoId" class="form-select">
-                            @if(empleado.PuestoId > 0)
+
+                            <option value="0" disabled>Seleccione Puesto</option>
+
+                            @foreach(var puesto in L_Puestos.Where(o => o.DepartamentoId == empleado.DepartamentoId))
                             {
-                                @foreach(var puesto in L_Puestos.Where(o => o.DepartamentoId == empleado.DepartamentoId))
-                                {
-                                    <option value="@puesto.PuestoId">@puesto.Nombre</option>
-                                }
+                                <option value="@puesto.PuestoId">@puesto.Nombre</option>
                             }
                         </InputSelect>
                         <ValidationMessage For="@(() => empleado.PuestoId)" />
@@ -106,30 +110,30 @@
 
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label>AFP:</label>
-                        <InputNumber @bind-Value="empleado.AFP" class="form-control" disabled></InputNumber>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Seguro Médico:</label>
-                        <InputNumber @bind-Value="empleado.SeguroMedico" class="form-control" disabled></InputNumber>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Impuesto sobre la Renta:</label>
-                        <InputNumber @bind-Value="empleado.Impuesto" class="form-control" disabled></InputNumber>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label>Descuento de Préstamo:</label>
-                        <InputNumber @bind-Value="empleado.Descuento" class="form-control" disabled></InputNumber>
+                        <label>Horas Trabajadas:</label>
+                        <InputNumber @bind-Value="empleado.HorasTrabajadas" class="form-control" disabled></InputNumber>
                     </div>
 
                     <div class="col-md-4">
                         <label>Horas Extras:</label>
                         <InputNumber @bind-Value="empleado.HorasExtras" class="form-control" disabled></InputNumber>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Salario Base:</label>
+                        <InputNumber @bind-Value="empleado.SalarioBase" class="form-control" disabled></InputNumber>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Descuentos:</label>
+                        <InputNumber @bind-Value="empleado.DescuentoPrestamo" class="form-control" disabled></InputNumber>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Salario Neto:</label>
+                        <InputNumber @bind-Value="empleado.SalarioNeto" class="form-control" disabled></InputNumber>
                     </div>
                 </div>
 
@@ -259,7 +263,7 @@
     {
 
         if (Validar())
-        {
+        {   
             using var response = await httpClient.PostAsJsonAsync("api/Empleados", empleado);
 
             if (response.IsSuccessStatusCode)
@@ -302,34 +306,5 @@
                 notify.ShowNotification(titulo: "Eliminado", mensaje: "El producto se ha eliminado correctamente", NotificationSeverity.Error);
             }
         }
-    }
-
-    public decimal CalcularHorasExtras()
-    {
-        int horasTrabajo = 8;
-        int horasTrabajadas = 10;
-
-        if(horasTrabajadas > horasTrabajo)
-        {
-            empleado.HorasExtras = horasTrabajadas - horasTrabajo;
-            decimal salarioBase = 1000;
-            decimal salarioHoraExtra = salarioBase * 1.5m;
-            return salarioHoraExtra * empleado.HorasExtras;
-        }
-
-        return 0;
-    }
-
-    public void CalcularNomina()
-    {
-        decimal salarioBase = 1000;
-
-        empleado.HorasExtras = CalcularHorasExtras();
-
-        empleado.AFP = salarioBase * 0.1m;
-        empleado.SeguroMedico = 50;
-
-        empleado.Impuesto = salarioBase * 0.15m;
-        empleado.Descuento = 100;
     }
 }

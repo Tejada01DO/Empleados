@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RegistroEmpleados.Server.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231027030254_Inicial")]
+    [Migration("20231027153655_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -163,14 +163,17 @@ namespace RegistroEmpleados.Server.Migrations
                     b.Property<int>("DepartamentoId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Descuento")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("DescuentoPrestamo")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Direccion")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("HorasExtras")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HorasExtras")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HorasTrabajadas")
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Impuesto")
                         .HasColumnType("TEXT");
@@ -183,6 +186,12 @@ namespace RegistroEmpleados.Server.Migrations
 
                     b.Property<int>("PuestoId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("SalarioBase")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SalarioNeto")
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("SeguroMedico")
                         .HasColumnType("TEXT");

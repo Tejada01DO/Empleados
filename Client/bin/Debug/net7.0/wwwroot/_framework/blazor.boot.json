@@ -200,15 +200,15 @@
       "mscorlib.dll": "sha256-qqpKd+W+AFb6UxudEYEKzrz7ma81p5LrWUwPBVvHV4U=",
       "netstandard.dll": "sha256-OYYuPT3JUknj4LdYIa58zF7kDB3tCnLzjCSuhEjtKXM=",
       "System.Private.CoreLib.dll": "sha256-EVS7zPxPV\/41g2mzPwdXtwiigWxI\/SeAHme1IgyD6tc=",
-      "RegistroEmpleados.Shared.dll": "sha256-aIH+jowFPQK002wWrvTv11lbjMDxUqZrEbkZvCYrOYY=",
-      "RegistroEmpleados.Client.dll": "sha256-kayE7mNvzdFpUTkA4m\/Y1\/7RT\/Y1YkqWDj4ki7lpJwY="
+      "RegistroEmpleados.Shared.dll": "sha256-TZY3zGeIEiIcYdhoWldht3zCE8TpiO+f0vpUPDzjoKM=",
+      "RegistroEmpleados.Client.dll": "sha256-Wt9JEIkmlmp+LS6siPcYt\/srzajxRbvqeDIQCJzeJJM="
     },
     "extensions": null,
     "lazyAssembly": null,
     "libraryInitializers": null,
     "pdb": {
-      "RegistroEmpleados.Shared.pdb": "sha256-W\/R9oicyRyTs\/5sm7nQJiV7nonSorIEL\/4kpRyuJuCw=",
-      "RegistroEmpleados.Client.pdb": "sha256-l3nO\/wjF2Ij5S93OXVvAm7gd0VTyNpYIg4R3KqKuNIg="
+      "RegistroEmpleados.Shared.pdb": "sha256-4NIloT9skFa72xQttFrjERpgFugWGbeZ97So2Q5sWm4=",
+      "RegistroEmpleados.Client.pdb": "sha256-yQHaVvqmi619uz7O2OsThkFr1IVqWOh2lLdnJfNT6rg="
     },
     "runtime": {
       "dotnet.7.0.5.bw8obut9ec.js": "sha256-codB25EodaFEP43MDCfMBuKXU4LqurUKnQrpoMIFnPs=",
