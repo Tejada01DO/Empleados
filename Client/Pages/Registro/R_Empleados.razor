@@ -1,0 +1,335 @@
+@page "/R_Empleados"
+@page "/R_Empleados/{EmpleadoId:int}"
+@inject HttpClient httpClient
+@inject NotificationService notify
+
+<EditForm Model="empleado" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h1>Registro de Empleados</h1>
+            </div>
+
+            <div class="card-body">
+                <div class="col-md-6">
+                    <label>ID Del Empleado</label>
+                    <div class="input-group">
+                        <InputNumber @bind-Value="empleado.EmpleadoId" class="form-control"></InputNumber>
+                        <button type="button" class="btn btn-outline-primary oi oi-magnifying-glass" @onclick="Buscar"></button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Nombre:</label>
+                        <InputText @bind-Value="empleado.Nombre" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => empleado.Nombre)" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Apellido:</label>
+                        <InputText @bind-Value="empleado.Apellido" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => empleado.Apellido)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Cedula:</label>
+                        <InputText @bind-Value="empleado.Cedula" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => empleado.Cedula)" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Direccion:</label>
+                        <InputText @bind-Value="empleado.Direccion" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => empleado.Direccion)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Telefono:</label>
+                        <InputText @bind-Value="empleado.Telefono" class="form-control"></InputText>
+                        <ValidationMessage For="@(() => empleado.Telefono)" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Profesion:</label>
+                        <InputSelect @bind-Value="empleado.ProfesionId" class="form-select">
+                            @foreach(var profesiones in L_Profesiones)
+                            {
+                                <option value="profesiones.ProfesionId">@profesiones.Nombre</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => empleado.ProfesionId)" />
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label>Departamento:</label>
+                        <InputSelect @bind-Value="empleado.DepartamentoId" class="form-select">
+                            @if(empleado.DepartamentoId > 0)
+                            {
+                                @foreach(var departamento in L_Departamentos.Where(d => d.ProfesionId == empleado.ProfesionId))
+                                {
+                                    <option value="@departamento.DepartamentoId">@departamento.Nombre</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => empleado.DepartamentoId)" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Puesto:</label>
+                        <InputSelect @bind-Value="empleado.PuestoId" class="form-select">
+                            @if(empleado.PuestoId > 0)
+                            {
+                                @foreach(var puesto in L_Puestos.Where(o => o.DepartamentoId == empleado.DepartamentoId))
+                                {
+                                    <option value="@puesto.PuestoId">@puesto.Nombre</option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => empleado.PuestoId)" />
+                    </div>
+                </div>
+
+                <div class="row mb-1">
+                    <div class="col-md-12">
+                        <h4>Detalles de Nómina</h4>
+                        <hr />
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>AFP:</label>
+                        <InputNumber @bind-Value="empleado.AFP" class="form-control" disabled></InputNumber>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Seguro Médico:</label>
+                        <InputNumber @bind-Value="empleado.SeguroMedico" class="form-control" disabled></InputNumber>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Impuesto sobre la Renta:</label>
+                        <InputNumber @bind-Value="empleado.Impuesto" class="form-control" disabled></InputNumber>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label>Descuento de Préstamo:</label>
+                        <InputNumber @bind-Value="empleado.Descuento" class="form-control" disabled></InputNumber>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Horas Extras:</label>
+                        <InputNumber @bind-Value="empleado.HorasExtras" class="form-control" disabled></InputNumber>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary" @onclick="Limpiar">Nuevo <i class="oi oi-file" /></button>
+                    <button type="submit" class="btn btn-outline-success">Guardar <i class="oi oi-document" /></button>
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public int EmpleadoId { get; set; }
+    public Empleados empleado { get; set; } = new Empleados();
+    public List<Empleados> L_Empleados { get; set; } = new List<Empleados>();
+    public List<Profesiones> L_Profesiones { get; set; } = new List<Profesiones>();
+    public List<Departamentos> L_Departamentos { get; set; } = new List<Departamentos>();
+    public List<Puestos> L_Puestos { get; set; } = new List<Puestos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var empleados = await httpClient.GetFromJsonAsync<List<Empleados>>("api/Empleados");
+        var profesiones = await httpClient.GetFromJsonAsync<List<Profesiones>>("api/Profesiones");
+        var departamentos = await httpClient.GetFromJsonAsync<List<Departamentos>>("api/Departamentos");
+        var puestos = await httpClient.GetFromJsonAsync<List<Puestos>>("api/Puestos");
+
+        if (empleados is not null)
+        {
+            L_Empleados = empleados;
+        }
+
+        if(profesiones is not null)
+        {
+            L_Profesiones = profesiones;
+        }
+
+        if(departamentos is not null)
+        {
+            L_Departamentos = departamentos;
+        }
+
+        if(puestos is not null)
+        {
+            L_Puestos = puestos;
+        }
+
+        if(EmpleadoId > 0)
+        {
+            this.empleado.EmpleadoId = EmpleadoId;
+            await this.Buscar();
+        }
+    }
+
+    public void Nuevo()
+    {
+        this.empleado = new Empleados();
+    }
+
+    public void Limpiar()
+    {
+        this.empleado = new Empleados();
+        notify.ShowNotification(titulo: "Nuevo", mensaje: "Se ha limpiado correctamente", NotificationSeverity.Info);
+    }
+
+    public async Task<bool> Buscar()
+    {
+        try
+        {
+            var empleadoEncontrado = await httpClient.GetFromJsonAsync<Empleados>($"api/Empleados/{empleado.EmpleadoId}");
+
+            if (empleadoEncontrado != null)
+            {
+                this.empleado = empleadoEncontrado;
+
+                StateHasChanged();
+                notify.ShowNotification(titulo: "Encontrado", mensaje: "El empleado se ha encontrado con exito", NotificationSeverity.Info);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch
+        {
+            notify.ShowNotification(titulo: "No encontrado", mensaje: "Esa empleado no existe", NotificationSeverity.Warning);
+            return false;
+        }
+    }
+
+    public bool Validar()
+    {
+        if (string.IsNullOrEmpty(empleado.Nombre))
+        {
+            return false;
+        }
+        if (string.IsNullOrEmpty(empleado.Apellido))
+        {
+            return false;
+        }
+        if(string.IsNullOrEmpty(empleado.Cedula))
+        {
+            return false;
+        }
+        if (string.IsNullOrEmpty(empleado.Direccion))
+        {
+            return false;
+        }
+        if(string.IsNullOrEmpty(empleado.Telefono))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    public async Task Guardar()
+    {
+
+        if (Validar())
+        {
+            using var response = await httpClient.PostAsJsonAsync("api/Empleados", empleado);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var empleadoDevuelto = await response.Content.ReadFromJsonAsync<Empleados>();
+
+                if (empleadoDevuelto is not null)
+                {
+                    this.empleado = empleadoDevuelto;
+                    Nuevo();
+                    notify.ShowNotification(titulo: "Guardado", mensaje: "El producto se ha guardado con exito",
+                    NotificationSeverity.Success);
+                }
+                else
+                {
+                    notify.ShowNotification(titulo: "No Guardado", mensaje: "No hay nada para guardar", NotificationSeverity.Error);
+                }
+            }
+            else
+            {
+                notify.ShowNotification(titulo: "Error", mensaje: "Ha ocurrido un error, intentelo de nuevo", NotificationSeverity.Error);
+            }
+        }
+    }
+    
+    public async Task Eliminar()
+    {
+        if (Validar())
+        {
+            using var response = await httpClient.DeleteAsync($"api/Empleados/{empleado.EmpleadoId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                notify.ShowNotification(titulo: "No eliminado", mensaje: "No hay nada por eliminar", NotificationSeverity.Warning);
+                return;
+            }
+            else
+            {
+                Nuevo();
+                notify.ShowNotification(titulo: "Eliminado", mensaje: "El producto se ha eliminado correctamente", NotificationSeverity.Error);
+            }
+        }
+    }
+
+    public decimal CalcularHorasExtras()
+    {
+        int horasTrabajo = 8;
+        int horasTrabajadas = 10;
+
+        if(horasTrabajadas > horasTrabajo)
+        {
+            empleado.HorasExtras = horasTrabajadas - horasTrabajo;
+            decimal salarioBase = 1000;
+            decimal salarioHoraExtra = salarioBase * 1.5m;
+            return salarioHoraExtra * empleado.HorasExtras;
+        }
+
+        return 0;
+    }
+
+    public void CalcularNomina()
+    {
+        decimal salarioBase = 1000;
+
+        empleado.HorasExtras = CalcularHorasExtras();
+
+        empleado.AFP = salarioBase * 0.1m;
+        empleado.SeguroMedico = 50;
+
+        empleado.Impuesto = salarioBase * 0.15m;
+        empleado.Descuento = 100;
+    }
+}
